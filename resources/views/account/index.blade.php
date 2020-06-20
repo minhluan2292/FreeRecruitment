@@ -22,7 +22,7 @@
 </head>
 <body>
     <div id="app">
-        <vue-container></vue-container>
+        <vue-container :user='@json(Auth::user())'></vue-container>
     </div>
 </body>
 </html>
