@@ -47,7 +47,7 @@
         class="fill-height"
         fluid 
       >
-        <AccountManagement id="account-management"></AccountManagement>
+        <AccountManagement :accounts="accounts" id="account-management"></AccountManagement>
       </v-container>
     </v-main>
     <v-footer
@@ -67,11 +67,7 @@
           user: {
                 type: Object,
                 required: true
-                },
-          accounts: {
-                type: Array,
-                default: []
-            }
+                }
         },
         mounted() {
             axios.get('/accounts')
@@ -81,7 +77,8 @@
                 });
         },
         data: () => ({
-        drawer: null,
+          drawer: null,
+          accounts: []
         }),
         methods: {
             logout() {
