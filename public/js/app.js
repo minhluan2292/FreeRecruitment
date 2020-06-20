@@ -2477,12 +2477,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: {
-    accounts: {
-      type: Array,
-      "default": []
-    }
-  },
+  props: {},
   data: function data() {
     return {
       valid: true,
@@ -2521,14 +2516,6 @@ __webpack_require__.r(__webpack_exports__);
       }
     };
   },
-  mounted: function mounted() {
-    var _this = this;
-
-    axios.get('/accounts').then(function (response) {
-      console.log(response.data);
-      _this.accounts = response.data;
-    });
-  },
   methods: {
     resetemailvalidate: function resetemailvalidate() {
       this.emailRules = [function (v) {
@@ -2538,7 +2525,7 @@ __webpack_require__.r(__webpack_exports__);
       }];
     },
     validate: function validate() {
-      var _this2 = this;
+      var _this = this;
 
       if (this.$refs.form.validate()) {
         axios.post('/account/new', {
@@ -2548,11 +2535,11 @@ __webpack_require__.r(__webpack_exports__);
           role: this.select
         }).then(function (response) {
           if (response.data == "Email exist") {
-            _this2.emailRules = [function (v) {
+            _this.emailRules = [function (v) {
               return "Email exist";
             }];
           } else {
-            _this2.$refs.form.reset();
+            _this.$refs.form.reset();
           }
         });
       }
@@ -2678,7 +2665,19 @@ __webpack_require__.r(__webpack_exports__);
     user: {
       type: Object,
       required: true
+    },
+    accounts: {
+      type: Array,
+      "default": []
     }
+  },
+  mounted: function mounted() {
+    var _this = this;
+
+    axios.get('/accounts').then(function (response) {
+      console.log(response.data);
+      _this.accounts = response.data;
+    });
   },
   data: function data() {
     return {
