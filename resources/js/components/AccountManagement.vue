@@ -16,11 +16,36 @@
                     
                     <div class="btnGroup1">
                         <v-btn :disabled="!valid" color="success" class="mr-4" @click="validate">Add New</v-btn>
-                        <v-btn color="primary" @click="resetValidation" class="mr-4">Update</v-btn>
+                        <v-btn color="primary" @click="updatecheck" class="mr-4">Update</v-btn>
                         <v-btn color="warning" class="mr-4" @click="reset">Reset</v-btn>
                     </div>
                 </div>
             </div>
+
+            <!-- Dialog -->
+            <v-dialog v-model="dialogUpdate1" max-width="30%">
+                <v-card>
+                    <v-card-title class="headline">Please choose user</v-card-title>
+
+                            <v-card-actions>
+                                <v-spacer></v-spacer>
+
+                                <v-btn color="green darken-1" text @click="dialogUpdate1 = false">OK</v-btn>
+                            </v-card-actions>
+                        </v-card>
+            </v-dialog>
+            <v-dialog v-model="dialogUpdate" max-width="30%">
+                <v-card>
+                    <v-card-title class="headline">Do you want to update?</v-card-title>
+
+                        <v-card-text>Choose OK to Update</v-card-text>
+                            <v-card-actions>
+                                <v-spacer></v-spacer>
+                                <v-btn color="red darken-1" text @click="dialogUpdate = false">Cancel</v-btn>
+                                <v-btn color="green darken-1" text @click="update">OK</v-btn>
+                            </v-card-actions>
+                        </v-card>
+            </v-dialog>
     
 
         </v-form>
@@ -79,6 +104,8 @@ import { fail } from 'assert';
                 emailMatch: () => ('The email and password you entered don\'t match'),
             },
             selectedAccount: null,
+            dialogUpdate: false,
+            dialogUpdate1: false,
          }),
         methods: {
             resetemailvalidate()
@@ -105,6 +132,7 @@ import { fail } from 'assert';
                             }
                             else
                             {
+                                window.location.reload();
                                 this.$refs.form.reset();
                             }
                         })
@@ -113,8 +141,28 @@ import { fail } from 'assert';
             reset () {
                 this.$refs.form.reset()
             },
-            resetValidation () {
-                this.$refs.form.resetValidation()
+            updatecheck () {
+                if(this.selectedAccount === null )
+                {
+                    this.dialogUpdate1 = true;
+                }
+                else
+                {
+                    this.dialogUpdate = true;
+                }
+            },
+            update () {
+                this.dialogUpdate = false;
+                axios.post('/account/update', {
+                        id: this.selectedAccount.id,
+                        name: this.name,
+                        email: this.email,
+                        password: this.password,
+                        role: this.select.id
+                    }).then((response) => {
+                        window.location.reload();
+                        this.$refs.form.reset();
+                })
             },
             selectAccount(account) {
                 this.name = account.name;
