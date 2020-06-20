@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use SebastianBergmann\Environment\Console;
 
 class AccountController extends Controller
 {
@@ -19,7 +20,7 @@ class AccountController extends Controller
     }
     public function get()
     {
-        $accounts = User::all();
+        $accounts = User::latest('updated_at')->get();
         return response()->json($accounts);
     }
     public function store(Request $request)
@@ -35,16 +36,20 @@ class AccountController extends Controller
             'password' => Hash::make($request->password),
             'role' => $request->role
         ]);
+        return response()->json($user);
+    }
+    public function update(Request $request)
+    {
+        $user = User::find($request->id);
+        $user->update([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => ($request->password == "") ? $user->password : Hash::make($request->password),
+            'role' => $request->role
+        ]);
 
         return response()->json($user);
     }
-    public function emailcheck(Request $request)
-    {
-        if(User::whereEmail($request->email)->count() > 0)
-        {
-            return 'Email exist';
-        }
-        return null;
-    }
+
 
 }
