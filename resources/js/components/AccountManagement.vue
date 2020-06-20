@@ -75,7 +75,7 @@ import { fail } from 'assert';
             password: '',
             rules: {
             required: value => !!value || 'Required.',
-            min: v => v.length >= 6 || 'Min 8 characters',
+            min: v => (v && v.length >= 6) || 'Min 6 characters',
             emailMatch: () => ('The email and password you entered don\'t match'),
         },
          }),
@@ -108,6 +108,10 @@ import { fail } from 'assert';
                                 this.emailRules = [
                                     v=>"Email exist",                               
                                 ]
+                            }
+                            else
+                            {
+                                this.$refs.form.reset();
                             }
                         })
                 }

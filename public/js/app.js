@@ -2513,7 +2513,7 @@ __webpack_require__.r(__webpack_exports__);
           return !!value || 'Required.';
         },
         min: function min(v) {
-          return v.length >= 6 || 'Min 8 characters';
+          return v && v.length >= 6 || 'Min 6 characters';
         },
         emailMatch: function emailMatch() {
           return 'The email and password you entered don\'t match';
@@ -2551,6 +2551,8 @@ __webpack_require__.r(__webpack_exports__);
             _this2.emailRules = [function (v) {
               return "Email exist";
             }];
+          } else {
+            _this2.$refs.form.reset();
           }
         });
       }
