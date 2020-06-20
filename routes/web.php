@@ -22,6 +22,8 @@ Auth::routes();
 Route::get('/account', 'AccountController@index')->name('index');
 Route::get('/accounts', 'AccountController@get');
 Route::post('/account/new', 'AccountController@store');
+Route::post('/account/update', 'AccountController@update');
+
 Route::get('/home', 'HomeController@index')->name('home');
 
 
