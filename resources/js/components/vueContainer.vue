@@ -63,11 +63,22 @@
     import AccountManagement from './AccountManagement.vue'
 
     export default {
-        props: {
-        user: {
-                    type: Object,
-                    required: true
-                }
+        props: {       
+          user: {
+                type: Object,
+                required: true
+                },
+          accounts: {
+                type: Array,
+                default: []
+            }
+        },
+        mounted() {
+            axios.get('/accounts')
+                .then((response) => {
+                    console.log(response.data);
+                    this.accounts = response.data;
+                });
         },
         data: () => ({
         drawer: null,
