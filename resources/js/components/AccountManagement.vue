@@ -5,18 +5,19 @@
             <div class="txtGroup">
                 <div class="txtGroup1">
                     <v-text-field v-model="name" :counter="30" :rules="nameRules" label="Name" required></v-text-field>
-                    <v-text-field v-model="email" :rules="emailRules" label="E-mail" required></v-text-field>
+                    <v-text-field v-model="email" :rules="emailRules" label="E-mail" required @change="resetemailvalidate"></v-text-field>
                     <v-text-field v-model="password" :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'" :rules="[rules.required, rules.min]"
                     :type="show1 ? 'text' : 'password'" label="Password" hint="At least 6 characters" 
                     counter @click:append="show1 = !show1"></v-text-field>
                 </div>
                 <div class="btnGroup">
-                    <v-select v-model="select" :items="items" :rules="[v => !!v || 'Role is required']" label="Role" required></v-select>
+                    <v-select v-model="select" :items="items" item-text="title" item-value="id" :rules="[v => !!v || 'Role is required']" label="Role" required>
+                    </v-select>
                     
                     <div class="btnGroup1">
                         <v-btn :disabled="!valid" color="success" class="mr-4" @click="validate">Add New</v-btn>
                         <v-btn color="primary" @click="resetValidation" class="mr-4">Update</v-btn>
-                        <v-btn color="warning" class="mr-4" @click="reset" >Reset</v-btn>
+                        <v-btn color="warning" class="mr-4" @click="reset">Reset</v-btn>
                     </div>
                 </div>
             </div>
@@ -44,6 +45,7 @@
 </template>
 
 <script>
+import { fail } from 'assert';
     export default {
         props: {
             accounts: {
@@ -59,14 +61,15 @@
                 v => (v && v.length <=30) || 'Name must be less than 30 characters',
             ],
             email: '',
+            select: null,
             emailRules: [
                 v => !!v || 'E-mail is required',
-                v => /.+@.+\..+/.test(v) || 'E-mail must be valid',
+                v => /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(v) || 'E-mail must be valid',
             ],
-            select: null,
-            items: [
-                'Admin full access',
-                'Customer management',
+            items:
+            [
+                { title: "Admin", id: '2' },
+                { title: "Customer management", id: '1' }
             ],
             show1: false,
             password: '',
@@ -84,8 +87,30 @@
                 });
         },
         methods: {
+            resetemailvalidate()
+            {
+                this.emailRules = [
+                    v => !!v || 'E-mail is required',
+                    v => /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(v) || 'E-mail must be valid'
+                ]
+            },
             validate () {
-                this.$refs.form.validate()
+                if(this.$refs.form.validate())
+                {
+                        axios.post('/account/new', {
+                            name: this.name,
+                            email: this.email,
+                            password: this.password,
+                            role: this.select
+                        }).then((response) => {
+                            if(response.data=="Email exist")
+                            {
+                                this.emailRules = [
+                                    v=>"Email exist",                               
+                                ]
+                            }
+                        })
+                }
             },
             reset () {
                 this.$refs.form.reset()
@@ -93,6 +118,7 @@
             resetValidation () {
                 this.$refs.form.resetValidation()
             },
+
         },
     
 
