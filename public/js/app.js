@@ -2475,9 +2475,39 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: {},
+  props: {
+    accounts: {
+      type: Array,
+      "default": []
+    }
+  },
   data: function data() {
     return {
       valid: true,
@@ -2513,7 +2543,10 @@ __webpack_require__.r(__webpack_exports__);
         emailMatch: function emailMatch() {
           return 'The email and password you entered don\'t match';
         }
-      }
+      },
+      selectedAccount: null,
+      dialogUpdate: false,
+      dialogUpdate1: false
     };
   },
   methods: {
@@ -2539,6 +2572,8 @@ __webpack_require__.r(__webpack_exports__);
               return "Email exist";
             }];
           } else {
+            window.location.reload();
+
             _this.$refs.form.reset();
           }
         });
@@ -2547,8 +2582,35 @@ __webpack_require__.r(__webpack_exports__);
     reset: function reset() {
       this.$refs.form.reset();
     },
-    resetValidation: function resetValidation() {
-      this.$refs.form.resetValidation();
+    updatecheck: function updatecheck() {
+      if (this.selectedAccount === null) {
+        this.dialogUpdate1 = true;
+      } else {
+        this.dialogUpdate = true;
+      }
+    },
+    update: function update() {
+      var _this2 = this;
+
+      this.dialogUpdate = false;
+      axios.post('/account/update', {
+        id: this.selectedAccount.id,
+        name: this.name,
+        email: this.email,
+        password: this.password,
+        role: this.select.id
+      }).then(function (response) {
+        window.location.reload();
+
+        _this2.$refs.form.reset();
+      });
+    },
+    selectAccount: function selectAccount(account) {
+      this.name = account.name;
+      this.email = account.email;
+      this.select = {
+        id: '' + account.role + ''
+      }, this.selectedAccount = account;
     }
   }
 });
@@ -2665,10 +2727,6 @@ __webpack_require__.r(__webpack_exports__);
     user: {
       type: Object,
       required: true
-    },
-    accounts: {
-      type: Array,
-      "default": []
     }
   },
   mounted: function mounted() {
@@ -2681,7 +2739,8 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
-      drawer: null
+      drawer: null,
+      accounts: []
     };
   },
   methods: {
@@ -8945,7 +9004,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, ".tb-account[data-v-2fc9ef75] {\n  margin-top: 20px;\n}\n.register-form[data-v-2fc9ef75] {\n  width: 100%;\n}\n.txtGroup[data-v-2fc9ef75] {\n  display: flex;\n}\n.txtGroup .txtGroup1[data-v-2fc9ef75] {\n  width: 40%;\n}\n.btnGroup[data-v-2fc9ef75] {\n  margin-left: 5%;\n  width: 40%;\n}\n.btnGroup .btnGroup1[data-v-2fc9ef75] {\n  display: flex;\n  padding-top: 10%;\n}", ""]);
+exports.push([module.i, ".tb-account[data-v-2fc9ef75] {\n  margin-top: 20px;\n}\n.register-form[data-v-2fc9ef75] {\n  width: 100%;\n}\n.txtGroup[data-v-2fc9ef75] {\n  display: flex;\n}\n.txtGroup .txtGroup1[data-v-2fc9ef75] {\n  width: 40%;\n}\n.btnGroup[data-v-2fc9ef75] {\n  margin-left: 5%;\n  width: 40%;\n}\n.btnGroup .btnGroup1[data-v-2fc9ef75] {\n  display: flex;\n  padding-top: 10%;\n}\n.selectedRow[data-v-2fc9ef75] {\n  background-color: goldenrod;\n  font-weight: bold;\n}", ""]);
 
 // exports
 
@@ -41734,7 +41793,7 @@ var render = function() {
                       {
                         staticClass: "mr-4",
                         attrs: { color: "primary" },
-                        on: { click: _vm.resetValidation }
+                        on: { click: _vm.updatecheck }
                       },
                       [_vm._v("Update")]
                     ),
@@ -41754,35 +41813,157 @@ var render = function() {
               ],
               1
             )
-          ])
-        ]
+          ]),
+          _vm._v(" "),
+          _c(
+            "v-dialog",
+            {
+              attrs: { "max-width": "30%" },
+              model: {
+                value: _vm.dialogUpdate1,
+                callback: function($$v) {
+                  _vm.dialogUpdate1 = $$v
+                },
+                expression: "dialogUpdate1"
+              }
+            },
+            [
+              _c(
+                "v-card",
+                [
+                  _c("v-card-title", { staticClass: "headline" }, [
+                    _vm._v("Please choose user")
+                  ]),
+                  _vm._v(" "),
+                  _c(
+                    "v-card-actions",
+                    [
+                      _c("v-spacer"),
+                      _vm._v(" "),
+                      _c(
+                        "v-btn",
+                        {
+                          attrs: { color: "green darken-1", text: "" },
+                          on: {
+                            click: function($event) {
+                              _vm.dialogUpdate1 = false
+                            }
+                          }
+                        },
+                        [_vm._v("OK")]
+                      )
+                    ],
+                    1
+                  )
+                ],
+                1
+              )
+            ],
+            1
+          ),
+          _vm._v(" "),
+          _c(
+            "v-dialog",
+            {
+              attrs: { "max-width": "30%" },
+              model: {
+                value: _vm.dialogUpdate,
+                callback: function($$v) {
+                  _vm.dialogUpdate = $$v
+                },
+                expression: "dialogUpdate"
+              }
+            },
+            [
+              _c(
+                "v-card",
+                [
+                  _c("v-card-title", { staticClass: "headline" }, [
+                    _vm._v("Do you want to update?")
+                  ]),
+                  _vm._v(" "),
+                  _c("v-card-text", [_vm._v("Choose OK to Update")]),
+                  _vm._v(" "),
+                  _c(
+                    "v-card-actions",
+                    [
+                      _c("v-spacer"),
+                      _vm._v(" "),
+                      _c(
+                        "v-btn",
+                        {
+                          attrs: { color: "red darken-1", text: "" },
+                          on: {
+                            click: function($event) {
+                              _vm.dialogUpdate = false
+                            }
+                          }
+                        },
+                        [_vm._v("Cancel")]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "v-btn",
+                        {
+                          attrs: { color: "green darken-1", text: "" },
+                          on: { click: _vm.update }
+                        },
+                        [_vm._v("OK")]
+                      )
+                    ],
+                    1
+                  )
+                ],
+                1
+              )
+            ],
+            1
+          )
+        ],
+        1
       ),
       _vm._v(" "),
-      _c("v-simple-table", { staticClass: "tb-account", attrs: { dark: "" } }, [
-        _c("thead", [
-          _c("tr", [
-            _c("th", { staticClass: "text-left" }, [_vm._v("Name")]),
-            _vm._v(" "),
-            _c("th", { staticClass: "text-left" }, [_vm._v("Email")]),
-            _vm._v(" "),
-            _c("th", { staticClass: "text-left" }, [_vm._v("Role")])
-          ])
-        ]),
-        _vm._v(" "),
-        _c(
-          "tbody",
-          _vm._l(_vm.accounts, function(account) {
-            return _c("tr", { key: account.id }, [
-              _c("td", [_vm._v(_vm._s(account.name))]),
+      _c(
+        "v-simple-table",
+        { ref: "table", staticClass: "tb-account", attrs: { dark: "" } },
+        [
+          _c("thead", [
+            _c("tr", [
+              _c("th", { staticClass: "text-left" }, [_vm._v("Name")]),
               _vm._v(" "),
-              _c("td", [_vm._v(_vm._s(account.email))]),
+              _c("th", { staticClass: "text-left" }, [_vm._v("Email")]),
               _vm._v(" "),
-              _c("td", [_vm._v(_vm._s(account.role))])
+              _c("th", { staticClass: "text-left" }, [_vm._v("Role")])
             ])
-          }),
-          0
-        )
-      ])
+          ]),
+          _vm._v(" "),
+          _c(
+            "tbody",
+            _vm._l(_vm.accounts, function(account) {
+              return _c(
+                "tr",
+                {
+                  key: account.id,
+                  class: { selectedRow: account == _vm.selectedAccount },
+                  on: {
+                    click: function($event) {
+                      return _vm.selectAccount(account)
+                    }
+                  }
+                },
+                [
+                  _c("td", [_vm._v(_vm._s(account.name))]),
+                  _vm._v(" "),
+                  _c("td", [_vm._v(_vm._s(account.email))]),
+                  _vm._v(" "),
+                  _c("td", [_vm._v(_vm._s(account.role))])
+                ]
+              )
+            }),
+            0
+          )
+        ]
+      )
     ],
     1
   )
@@ -41983,7 +42164,11 @@ var render = function() {
               staticClass: "fill-height",
               attrs: { id: "container", fluid: "" }
             },
-            [_c("AccountManagement", { attrs: { id: "account-management" } })],
+            [
+              _c("AccountManagement", {
+                attrs: { accounts: _vm.accounts, id: "account-management" }
+              })
+            ],
             1
           )
         ],
@@ -96916,10 +97101,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../../node_modules/vuetify-loader/lib/runtime/installComponents.js */ "./node_modules/vuetify-loader/lib/runtime/installComponents.js");
 /* harmony import */ var _node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_4__);
 /* harmony import */ var vuetify_lib_components_VBtn__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! vuetify/lib/components/VBtn */ "./node_modules/vuetify/lib/components/VBtn/index.js");
-/* harmony import */ var vuetify_lib_components_VForm__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! vuetify/lib/components/VForm */ "./node_modules/vuetify/lib/components/VForm/index.js");
-/* harmony import */ var vuetify_lib_components_VSelect__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! vuetify/lib/components/VSelect */ "./node_modules/vuetify/lib/components/VSelect/index.js");
-/* harmony import */ var vuetify_lib_components_VDataTable__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! vuetify/lib/components/VDataTable */ "./node_modules/vuetify/lib/components/VDataTable/index.js");
-/* harmony import */ var vuetify_lib_components_VTextField__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! vuetify/lib/components/VTextField */ "./node_modules/vuetify/lib/components/VTextField/index.js");
+/* harmony import */ var vuetify_lib_components_VCard__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! vuetify/lib/components/VCard */ "./node_modules/vuetify/lib/components/VCard/index.js");
+/* harmony import */ var vuetify_lib_components_VDialog__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! vuetify/lib/components/VDialog */ "./node_modules/vuetify/lib/components/VDialog/index.js");
+/* harmony import */ var vuetify_lib_components_VForm__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! vuetify/lib/components/VForm */ "./node_modules/vuetify/lib/components/VForm/index.js");
+/* harmony import */ var vuetify_lib_components_VSelect__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! vuetify/lib/components/VSelect */ "./node_modules/vuetify/lib/components/VSelect/index.js");
+/* harmony import */ var vuetify_lib_components_VDataTable__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! vuetify/lib/components/VDataTable */ "./node_modules/vuetify/lib/components/VDataTable/index.js");
+/* harmony import */ var vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! vuetify/lib/components/VGrid */ "./node_modules/vuetify/lib/components/VGrid/index.js");
+/* harmony import */ var vuetify_lib_components_VTextField__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! vuetify/lib/components/VTextField */ "./node_modules/vuetify/lib/components/VTextField/index.js");
 
 
 
@@ -96946,7 +97134,13 @@ var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_
 
 
 
-_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_4___default()(component, {VBtn: vuetify_lib_components_VBtn__WEBPACK_IMPORTED_MODULE_5__["VBtn"],VForm: vuetify_lib_components_VForm__WEBPACK_IMPORTED_MODULE_6__["VForm"],VSelect: vuetify_lib_components_VSelect__WEBPACK_IMPORTED_MODULE_7__["VSelect"],VSimpleTable: vuetify_lib_components_VDataTable__WEBPACK_IMPORTED_MODULE_8__["VSimpleTable"],VTextField: vuetify_lib_components_VTextField__WEBPACK_IMPORTED_MODULE_9__["VTextField"]})
+
+
+
+
+
+
+_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_4___default()(component, {VBtn: vuetify_lib_components_VBtn__WEBPACK_IMPORTED_MODULE_5__["VBtn"],VCard: vuetify_lib_components_VCard__WEBPACK_IMPORTED_MODULE_6__["VCard"],VCardActions: vuetify_lib_components_VCard__WEBPACK_IMPORTED_MODULE_6__["VCardActions"],VCardText: vuetify_lib_components_VCard__WEBPACK_IMPORTED_MODULE_6__["VCardText"],VCardTitle: vuetify_lib_components_VCard__WEBPACK_IMPORTED_MODULE_6__["VCardTitle"],VDialog: vuetify_lib_components_VDialog__WEBPACK_IMPORTED_MODULE_7__["VDialog"],VForm: vuetify_lib_components_VForm__WEBPACK_IMPORTED_MODULE_8__["VForm"],VSelect: vuetify_lib_components_VSelect__WEBPACK_IMPORTED_MODULE_9__["VSelect"],VSimpleTable: vuetify_lib_components_VDataTable__WEBPACK_IMPORTED_MODULE_10__["VSimpleTable"],VSpacer: vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_11__["VSpacer"],VTextField: vuetify_lib_components_VTextField__WEBPACK_IMPORTED_MODULE_12__["VTextField"]})
 
 
 /* hot reload */
