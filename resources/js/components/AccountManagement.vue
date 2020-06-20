@@ -48,10 +48,7 @@
 import { fail } from 'assert';
     export default {
         props: {
-            accounts: {
-                type: Array,
-                default: []
-            }
+            
         },
         data: () =>({
             valid: true,
@@ -74,18 +71,11 @@ import { fail } from 'assert';
             show1: false,
             password: '',
             rules: {
-            required: value => !!value || 'Required.',
-            min: v => (v && v.length >= 6) || 'Min 6 characters',
-            emailMatch: () => ('The email and password you entered don\'t match'),
-        },
+                required: value => !!value || 'Required.',
+                min: v => (v && v.length >= 6) || 'Min 6 characters',
+                emailMatch: () => ('The email and password you entered don\'t match'),
+            },
          }),
-        mounted() {
-            axios.get('/accounts')
-                .then((response) => {
-                    console.log(response.data);
-                    this.accounts = response.data;
-                });
-        },
         methods: {
             resetemailvalidate()
             {
