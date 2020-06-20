@@ -25,7 +25,7 @@
 
         </v-form>
 
-        <v-simple-table class="tb-account" dark>
+        <v-simple-table class="tb-account" ref="table" dark>
             <thead>
                 <tr>
                 <th class="text-left">Name</th>
@@ -34,7 +34,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="account in accounts" :key="account.id">
+                <tr v-for="account in accounts" :key="account.id" @click="selectAccount(account)" :class="{'selectedRow': account == selectedAccount}">
                 <td>{{ account.name }}</td>
                 <td>{{ account.email }}</td>
                 <td>{{ account.role }}</td>                
@@ -48,7 +48,10 @@
 import { fail } from 'assert';
     export default {
         props: {
-            
+            accounts: {
+                type: Array,
+                default: []
+            }
         },
         data: () =>({
             valid: true,
@@ -75,6 +78,7 @@ import { fail } from 'assert';
                 min: v => (v && v.length >= 6) || 'Min 6 characters',
                 emailMatch: () => ('The email and password you entered don\'t match'),
             },
+            selectedAccount: null,
          }),
         methods: {
             resetemailvalidate()
@@ -112,6 +116,12 @@ import { fail } from 'assert';
             resetValidation () {
                 this.$refs.form.resetValidation()
             },
+            selectAccount(account) {
+                this.name = account.name;
+                this.email = account.email;
+                this.select = { id: '' + account.role +'' },
+                this.selectedAccount = account;
+            },
 
         },
     
@@ -138,8 +148,11 @@ import { fail } from 'assert';
             display: flex;
             padding-top: 10%;
         }
-
-
     }
+    .selectedRow {
+        background-color: goldenrod;
+        font-weight: bold;
+    }
+
  </style>
  
