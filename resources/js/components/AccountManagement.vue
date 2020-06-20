@@ -46,7 +46,20 @@
                             </v-card-actions>
                         </v-card>
             </v-dialog>
+            <v-dialog v-model="alertDelete" max-width="30%">
+                <v-card>
+                    <v-card-title class="headline">Do you want to delete?</v-card-title>
+
+                        <v-card-text>Choose OK to Delete</v-card-text>
+                            <v-card-actions>
+                                <v-spacer></v-spacer>
+                                <v-btn color="red darken-1" text @click="alertDelete = false">Cancel</v-btn>
+                                <v-btn color="green darken-1" text >OK</v-btn>
+                            </v-card-actions>
+                        </v-card>
+            </v-dialog>
     
+        <!-- End Dialog -->
 
         </v-form>
 
@@ -56,13 +69,15 @@
                 <th class="text-left">Name</th>
                 <th class="text-left">Email</th>
                 <th class="text-left">Role</th>
+                <th class="text-left">Action</th>
                 </tr>
             </thead>
             <tbody>
                 <tr v-for="account in accounts" :key="account.id" @click="selectAccount(account)" :class="{'selectedRow': account == selectedAccount}">
                 <td>{{ account.name }}</td>
                 <td>{{ account.email }}</td>
-                <td>{{ account.role }}</td>                
+                <td>{{ account.role }}</td> 
+                <td><v-icon medium color="red" @click="alertDelete = true">mdi-delete</v-icon></td>               
                 </tr>
             </tbody>
         </v-simple-table>
@@ -106,6 +121,7 @@ import { fail } from 'assert';
             selectedAccount: null,
             dialogUpdate: false,
             dialogUpdate1: false,
+            alertDelete: false,
          }),
         methods: {
             resetemailvalidate()
@@ -158,7 +174,7 @@ import { fail } from 'assert';
                         name: this.name,
                         email: this.email,
                         password: this.password,
-                        role: this.select.id
+                        role: typeof(this.select.id) == 'undefined' ? this.select : this.select.id
                     }).then((response) => {
                         window.location.reload();
                         this.$refs.form.reset();
