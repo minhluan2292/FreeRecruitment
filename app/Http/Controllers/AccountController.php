@@ -29,14 +29,14 @@ class AccountController extends Controller
             return 'Email exist';
         }
 
-        // $user = User::create([
-        //     'name' => $request->name,
-        //     'email' => $request->email,
-        //     'password' => Hash::make($request->password),
-        //     'role' => $request->role
-        // ]);
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'role' => $request->role
+        ]);
 
-        // return response()->json($user);
+        return response()->json($user);
     }
     public function emailcheck(Request $request)
     {
