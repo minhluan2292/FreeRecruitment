@@ -20,7 +20,6 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/account', 'AccountController@index')->name('index');
-Route::get('/account/emailcheck', 'AccountController@emailcheck');
 Route::get('/accounts', 'AccountController@get');
 Route::post('/account/new', 'AccountController@store');
 Route::get('/home', 'HomeController@index')->name('home');
