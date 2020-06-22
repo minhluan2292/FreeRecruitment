@@ -2515,6 +2515,12 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
@@ -2548,6 +2554,7 @@ __webpack_require__.r(__webpack_exports__);
       }],
       show1: false,
       password: '',
+      rePassword: '',
       rules: {
         required: function required(value) {
           return !!value || 'Required.';
@@ -2565,8 +2572,17 @@ __webpack_require__.r(__webpack_exports__);
       alertDelete: false
     };
   },
+  computed: {
+    passwordConfirmationRule: function passwordConfirmationRule() {
+      var _this = this;
+
+      return function () {
+        return _this.password === _this.rePassword || 'Password must match';
+      };
+    }
+  },
   methods: {
-    resetemailvalidate: function resetemailvalidate() {
+    changemailrule: function changemailrule() {
       this.emailRules = [function (v) {
         return !!v || 'E-mail is required';
       }, function (v) {
@@ -2574,7 +2590,7 @@ __webpack_require__.r(__webpack_exports__);
       }];
     },
     validate: function validate() {
-      var _this = this;
+      var _this2 = this;
 
       if (this.$refs.form.validate()) {
         axios.post('/account/new', {
@@ -2584,13 +2600,13 @@ __webpack_require__.r(__webpack_exports__);
           role: this.select
         }).then(function (response) {
           if (response.data == "Email exist") {
-            _this.emailRules = [function (v) {
-              return "Email exist";
+            _this2.emailRules = [function (v) {
+              return "Email matching with another account";
             }];
           } else {
             window.location.reload();
 
-            _this.$refs.form.reset();
+            _this2.$refs.form.reset();
           }
         });
       }
@@ -2606,7 +2622,7 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     update: function update() {
-      var _this2 = this;
+      var _this3 = this;
 
       this.dialogUpdate = false;
       axios.post('/account/update', {
@@ -2618,7 +2634,7 @@ __webpack_require__.r(__webpack_exports__);
       }).then(function (response) {
         window.location.reload();
 
-        _this2.$refs.form.reset();
+        _this3.$refs.form.reset();
       });
     },
     selectAccount: function selectAccount(account) {
@@ -9020,7 +9036,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, ".tb-account[data-v-2fc9ef75] {\n  margin-top: 20px;\n}\n.register-form[data-v-2fc9ef75] {\n  width: 100%;\n}\n.txtGroup[data-v-2fc9ef75] {\n  display: flex;\n}\n.txtGroup .txtGroup1[data-v-2fc9ef75] {\n  width: 40%;\n}\n.btnGroup[data-v-2fc9ef75] {\n  margin-left: 5%;\n  width: 40%;\n}\n.btnGroup .btnGroup1[data-v-2fc9ef75] {\n  display: flex;\n  padding-top: 10%;\n}\n.selectedRow[data-v-2fc9ef75] {\n  background-color: goldenrod;\n  font-weight: bold;\n}", ""]);
+exports.push([module.i, ".tb-account[data-v-2fc9ef75] {\n  margin-top: 20px;\n}\n.register-form[data-v-2fc9ef75] {\n  width: 100%;\n}\n.txtGroup[data-v-2fc9ef75] {\n  display: flex;\n}\n.txtGroup .txtGroup1[data-v-2fc9ef75] {\n  width: 40%;\n}\n.btnGroup[data-v-2fc9ef75] {\n  margin-left: 5%;\n  width: 40%;\n}\n.btnGroup .btnGroup1[data-v-2fc9ef75] {\n  display: flex;\n}\n.selectedRow[data-v-2fc9ef75] {\n  background-color: goldenrod;\n  font-weight: bold;\n}", ""]);
 
 // exports
 
@@ -41728,7 +41744,7 @@ var render = function() {
                     label: "E-mail",
                     required: ""
                   },
-                  on: { change: _vm.resetemailvalidate },
+                  on: { click: _vm.changemailrule },
                   model: {
                     value: _vm.email,
                     callback: function($$v) {
@@ -41738,6 +41754,35 @@ var render = function() {
                   }
                 }),
                 _vm._v(" "),
+                _c("v-select", {
+                  attrs: {
+                    items: _vm.items,
+                    "item-text": "title",
+                    "item-value": "id",
+                    rules: [
+                      function(v) {
+                        return !!v || "Role is required"
+                      }
+                    ],
+                    label: "Role",
+                    required: ""
+                  },
+                  model: {
+                    value: _vm.select,
+                    callback: function($$v) {
+                      _vm.select = $$v
+                    },
+                    expression: "select"
+                  }
+                })
+              ],
+              1
+            ),
+            _vm._v(" "),
+            _c(
+              "div",
+              { staticClass: "btnGroup" },
+              [
                 _c("v-text-field", {
                   attrs: {
                     "append-icon": _vm.show1 ? "mdi-eye" : "mdi-eye-off",
@@ -41759,34 +41804,32 @@ var render = function() {
                     },
                     expression: "password"
                   }
-                })
-              ],
-              1
-            ),
-            _vm._v(" "),
-            _c(
-              "div",
-              { staticClass: "btnGroup" },
-              [
-                _c("v-select", {
+                }),
+                _vm._v(" "),
+                _c("v-text-field", {
                   attrs: {
-                    items: _vm.items,
-                    "item-text": "title",
-                    "item-value": "id",
+                    "append-icon": _vm.show1 ? "mdi-eye" : "mdi-eye-off",
                     rules: [
-                      function(v) {
-                        return !!v || "Role is required"
-                      }
+                      _vm.rules.required,
+                      _vm.rules.min,
+                      _vm.passwordConfirmationRule
                     ],
-                    label: "Role",
-                    required: ""
+                    type: _vm.show1 ? "text" : "password",
+                    label: "Password again",
+                    hint: "At least 6 characters",
+                    counter: ""
+                  },
+                  on: {
+                    "click:append": function($event) {
+                      _vm.show1 = !_vm.show1
+                    }
                   },
                   model: {
-                    value: _vm.select,
+                    value: _vm.rePassword,
                     callback: function($$v) {
-                      _vm.select = $$v
+                      _vm.rePassword = $$v
                     },
-                    expression: "select"
+                    expression: "rePassword"
                   }
                 }),
                 _vm._v(" "),

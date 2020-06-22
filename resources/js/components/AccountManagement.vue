@@ -5,14 +5,20 @@
             <div class="txtGroup">
                 <div class="txtGroup1">
                     <v-text-field v-model="name" :counter="30" :rules="nameRules" label="Name" required></v-text-field>
-                    <v-text-field v-model="email" :rules="emailRules" label="E-mail" required @change="resetemailvalidate"></v-text-field>
+                    <v-text-field v-model="email" :rules="emailRules" label="E-mail" @click="changemailrule" required ></v-text-field>
+                    <v-select v-model="select" :items="items" item-text="title" item-value="id" :rules="[v => !!v || 'Role is required']" label="Role" required>
+                    </v-select>
+                    
+                    
+                </div>
+                <div class="btnGroup">
                     <v-text-field v-model="password" :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'" :rules="[rules.required, rules.min]"
                     :type="show1 ? 'text' : 'password'" label="Password" hint="At least 6 characters" 
                     counter @click:append="show1 = !show1"></v-text-field>
-                </div>
-                <div class="btnGroup">
-                    <v-select v-model="select" :items="items" item-text="title" item-value="id" :rules="[v => !!v || 'Role is required']" label="Role" required>
-                    </v-select>
+                    <v-text-field v-model="rePassword" :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'" :rules="[rules.required, rules.min, passwordConfirmationRule]"
+                    :type="show1 ? 'text' : 'password'" label="Password again" hint="At least 6 characters" 
+                    counter @click:append="show1 = !show1"></v-text-field>
+
                     
                     <div class="btnGroup1">
                         <v-btn :disabled="!valid" color="success" class="mr-4" @click="validate">Add New</v-btn>
@@ -113,6 +119,7 @@ import { fail } from 'assert';
             ],
             show1: false,
             password: '',
+            rePassword: '',
             rules: {
                 required: value => !!value || 'Required.',
                 min: v => (v && v.length >= 6) || 'Min 6 characters',
@@ -122,14 +129,19 @@ import { fail } from 'assert';
             dialogUpdate: false,
             dialogUpdate1: false,
             alertDelete: false,
-         }),
+        }),
+        computed: {
+                passwordConfirmationRule() {
+                    return () => (this.password === this.rePassword) || 'Password must match'
+                },
+            
+        },
         methods: {
-            resetemailvalidate()
-            {
-                this.emailRules = [
-                    v => !!v || 'E-mail is required',
-                    v => /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(v) || 'E-mail must be valid'
-                ]
+            changemailrule() {
+                    this.emailRules = [
+                        v => !!v || 'E-mail is required',
+                        v => /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(v) || 'E-mail must be valid',
+                    ]
             },
             validate () {
                 if(this.$refs.form.validate())
@@ -143,8 +155,8 @@ import { fail } from 'assert';
                             if(response.data=="Email exist")
                             {
                                 this.emailRules = [
-                                    v=>"Email exist",                               
-                                ]
+                                    v => "Email matching with another account"
+                                ];
                             }
                             else
                             {
@@ -210,7 +222,6 @@ import { fail } from 'assert';
         width: 40%;
         .btnGroup1 {
             display: flex;
-            padding-top: 10%;
         }
     }
     .selectedRow {
