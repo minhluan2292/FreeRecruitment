@@ -66,10 +66,33 @@
             </v-dialog>
     
         <!-- End Dialog -->
-
         </v-form>
-
-        <v-simple-table class="tb-account" ref="table" dark>
+        <!-- Table Account -->
+        <v-card>
+            <v-card-title> Account list <v-spacer></v-spacer>
+                <v-text-field v-model="search" append-icon="mdi-account-search" label="Search" single-line hide-details></v-text-field>
+            </v-card-title>
+            <v-data-table :headers="headers" :items="sortedAccounts" :search="search" 
+            :footer-props="{'items-per-page-options': [4, 8, 12, 16, -1]
+            }"
+            item-key="id"
+            @click:row="selectAccount" single-select
+            >
+            <template #item.actions="{item}">
+                <td @click.stop class="non-clickable">
+                <v-btn small >View</v-btn>
+                <v-btn small >Edit</v-btn>
+                <v-btn color="red" small @click="selectdete(item)">Delete</v-btn>
+                </td>
+            </template>
+            <template v-slot:no-results>
+                <v-alert :value="true" color="error" icon="mdi-alert">
+                Your search for "{{ search }}" found no results.
+                </v-alert>
+            </template>
+            </v-data-table>
+        </v-card>
+        <!-- <v-simple-table class="tb-account" ref="table" dark>
             <thead>
                 <tr>
                 <th class="text-left">Name</th>
@@ -79,14 +102,14 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="account in accounts" :key="account.id" @click="selectAccount(account)" :class="{'selectedRow': account == selectedAccount}">
+                <tr v-for="account in sortedAccounts" :key="account.id" @click="selectAccount(account)" :class="{'selectedRow': account == selectedAccount}">
                 <td>{{ account.name }}</td>
                 <td>{{ account.email }}</td>
                 <td>{{ account.role }}</td> 
                 <td><v-icon medium color="red" @click="alertDelete = true">mdi-delete</v-icon></td>               
                 </tr>
             </tbody>
-        </v-simple-table>
+        </v-simple-table> -->
     </div>
 </template>
 
@@ -100,6 +123,19 @@ import { fail } from 'assert';
             }
         },
         data: () =>({
+            search: '',
+            headers: [
+            {
+                text: 'ID',
+                align: 'left',
+                sortable: false,
+                value: 'id'
+            },
+            { text: 'Name', value: 'name' },
+            { text: 'Email', value: 'email' },
+            { text: 'Role', value: 'role' },
+            { text: 'Action', value: 'actions' },
+            ],
             valid: true,
             name: '',
             nameRules: [
@@ -134,7 +170,9 @@ import { fail } from 'assert';
                 passwordConfirmationRule() {
                     return () => (this.password === this.rePassword) || 'Password must match'
                 },
-            
+                sortedAccounts() {
+                return _.orderBy(this.accounts, ['updated_at'], ['desc']);
+            }        
         },
         methods: {
             changemailrule() {
@@ -160,7 +198,7 @@ import { fail } from 'assert';
                             }
                             else
                             {
-                                window.location.reload();
+                                this.accounts.push(response.data);
                                 this.$refs.form.reset();
                             }
                         })
@@ -192,16 +230,18 @@ import { fail } from 'assert';
                         this.$refs.form.reset();
                 })
             },
-            selectAccount(account) {
+            selectAccount(account, row) {
+                row.select(true);
                 this.name = account.name;
                 this.email = account.email;
                 this.select = { id: '' + account.role +'' },
                 this.selectedAccount = account;
             },
+            selectdete(item) {
+                alert(item.name);
+            }
 
         },
-    
-
     }
 </script>
  <style lang="scss" scoped>
