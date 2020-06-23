@@ -20,7 +20,7 @@ class AccountController extends Controller
     }
     public function get()
     {
-        $accounts = User::latest('updated_at')->get();
+        $accounts = User::where('delete',0)->get();
         return response()->json($accounts);
     }
     public function store(Request $request)
