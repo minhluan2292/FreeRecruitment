@@ -72,8 +72,12 @@
         mounted() {
             axios.get('/accounts')
                 .then((response) => {
-                    console.log(response.data);
-                    this.accounts = response.data;
+                  if(response.status === 200)
+                  {
+                    this.accounts = response.data.success.message;
+                  }
+                }).catch((error)=>{
+                    console.log(response.error);
                 });
         },
         data: () => ({
