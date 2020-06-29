@@ -2642,16 +2642,18 @@ __webpack_require__.r(__webpack_exports__);
           name: this.name,
           email: this.email,
           password: this.password,
-          role: this.select
+          role: typeof this.select.id == 'undefined' ? this.select : this.select.id
         }).then(function (response) {
-          if (response.data == "Email exist") {
+          if (response.status === 200) {
+            _this2.accounts.push(response.data.success.message);
+
+            _this2.$refs.form.reset();
+          }
+        })["catch"](function (error) {
+          if (error.response.status == 404 && error.response.data.error.message === "Email Exist") {
             _this2.emailRules = [function (v) {
               return "Email matching with another account";
             }];
-          } else {
-            _this2.accounts.push(response.data);
-
-            _this2.$refs.form.reset();
           }
         });
       }
@@ -2814,8 +2816,11 @@ __webpack_require__.r(__webpack_exports__);
     var _this = this;
 
     axios.get('/accounts').then(function (response) {
-      console.log(response.data);
-      _this.accounts = response.data;
+      if (response.status === 200) {
+        _this.accounts = response.data.success.message;
+      }
+    })["catch"](function (error) {
+      console.log(response.error);
     });
   },
   data: function data() {
