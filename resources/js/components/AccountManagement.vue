@@ -188,18 +188,19 @@ import { fail } from 'assert';
                             name: this.name,
                             email: this.email,
                             password: this.password,
-                            role: this.select
+                            role: typeof(this.select.id) == 'undefined' ? this.select : this.select.id
                         }).then((response) => {
-                            if(response.data=="Email exist")
+                            if(response.status === 200)
+                            {
+                                this.accounts.push(response.data.success.message);
+                                this.$refs.form.reset();
+                            }
+                        }).catch((error) =>{
+                            if(error.response.status == 404 && error.response.data.error.message === "Email Exist")
                             {
                                 this.emailRules = [
                                     v => "Email matching with another account"
                                 ];
-                            }
-                            else
-                            {
-                                this.accounts.push(response.data);
-                                this.$refs.form.reset();
                             }
                         })
                 }
