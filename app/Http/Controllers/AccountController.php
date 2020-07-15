@@ -56,5 +56,4 @@ class AccountController extends Controller
         return ResponseHelper::successOKResponse($user);
     }
 
-
 }
