@@ -28,7 +28,7 @@
         "vue-template-compiler": "^2.6.10"
     },
     "dependencies": {
-        "vuetify": "^2.3.0",
+        "vuetify": "^2.6.10",
         "vuetify-loader": "^1.5.0"
     }
 }
